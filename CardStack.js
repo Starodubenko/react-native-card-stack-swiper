@@ -70,7 +70,7 @@ class CardStack extends Component {
         this.props.onSwipeEnd();
         const currentTime = new Date().getTime();
         const swipeDuration = currentTime - this.state.touchStart;
-        const { 
+        const {
           verticalThreshold,
           horizontalThreshold,
           disableTopSwipe,
@@ -122,7 +122,7 @@ class CardStack extends Component {
       },
     });
   }
-  
+
   componentDidUpdate(prevProps) {
     if (!this._isSameChildren(this.props.children, prevProps.children)) {
       let aIndex = (this.state.topCard == 'cardA') ? this.mod(this.state.sindex - 2, this.props.children.length) : this.mod(this.state.sindex - 1, this.props.children.length);
@@ -134,7 +134,7 @@ class CardStack extends Component {
       });
     }
   }
-  
+
   componentDidMount() {
     this.initDeck();
   }
@@ -412,10 +412,10 @@ class CardStack extends Component {
 
     return {
       position: 'absolute',
-      zIndex: (topCard === cardName) ? 3 : 2,
+      zIndex: (topCard === cardName) ? 4 : 2,
       ...Platform.select({
         android: {
-          elevation: (topCard === cardName) ? 3 : 2,
+          elevation: (topCard === cardName) ? 4 : 2,
         }
       }),
       ...transitionStyles,
@@ -424,7 +424,7 @@ class CardStack extends Component {
 
   render() {
 
-    const { renderNoMoreCards } = this.props;
+    const { renderNoMoreCards, swipeBackgroundComponent } = this.props;
     const { cardA, cardB, topCard } = this.state;
 
     return (
@@ -432,11 +432,13 @@ class CardStack extends Component {
         <View style={this.props.contentStyle}>
           {renderNoMoreCards()}
 
+          {swipeBackgroundComponent}
           <Animated.View
               {...this._setPointerEvents(topCard, 'cardB')}
               style={this.getCardStyles('cardB')}>
             {cardB}
           </Animated.View>
+          {swipeBackgroundComponent}
           <Animated.View
               {...this._setPointerEvents(topCard, 'cardA')}
               style={this.getCardStyles('cardA')}>
@@ -477,7 +479,9 @@ CardStack.propTypes = {
   horizontalSwipe: PropTypes.bool,
   horizontalThreshold: PropTypes.number,
   outputRotationRange: PropTypes.array,
-  duration: PropTypes.number
+  duration: PropTypes.number,
+
+  swipeBackgroundComponent: PropTypes.any,
 }
 
 CardStack.defaultProps = {
@@ -507,7 +511,8 @@ CardStack.defaultProps = {
   horizontalSwipe: true,
   horizontalThreshold: width / 2,
   outputRotationRange: ['-15deg', '0deg', '15deg'],
-  duration: 300
+  duration: 300,
+  swipeBackgroundComponent: null,
 }
 polyfill(CardStack);
 export default CardStack;
