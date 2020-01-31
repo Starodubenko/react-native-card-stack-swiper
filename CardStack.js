@@ -34,6 +34,33 @@ class CardStack extends Component {
       touchStart: 0,
     };
     this.distance = this.constructor.distance;
+
+    this._getDirection = (gestureState) => {
+      const {
+        disableTopSwipe,
+        disableLeftSwipe,
+        disableRightSwipe,
+        disableBottomSwipe,
+      } = this.props;
+
+      let swipeDirection = (gestureState.dx < 0) ? width * -1.5 : width * 1.5;
+      if (swipeDirection < 0 && !disableLeftSwipe) {
+        return 'left';
+      }
+      else if (swipeDirection > 0 && !disableRightSwipe) {
+         return 'right';
+      }
+
+      swipeDirection = (gestureState.dy < 0) ? height * -1 : height;
+
+      if (swipeDirection < 0 && !disableTopSwipe) {
+        return 'top';
+      }
+      else if (swipeDirection > 0 && !disableBottomSwipe) {
+        return 'bottom';
+      }
+    };
+
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (evt, gestureState) => false,
       onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
@@ -64,6 +91,8 @@ class CardStack extends Component {
         const dragDistance = this.distance((horizontalSwipe) ? gestureState.dx : 0, (verticalSwipe) ? gestureState.dy : 0);
         this.state.dragDistance.setValue(dragDistance);
         this.state.drag.setValue({ x: (horizontalSwipe) ? gestureState.dx : 0, y: (verticalSwipe) ? gestureState.dy : 0 });
+        this.props.onDrag(dragDistance);
+        this.props.onDirectionChanged(this._getDirection(gestureState));
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
@@ -366,7 +395,6 @@ class CardStack extends Component {
           default:
         }
       });
-
     }
   }
 
@@ -432,7 +460,6 @@ class CardStack extends Component {
         <View style={this.props.contentStyle}>
           {renderNoMoreCards()}
 
-          {swipeBackgroundComponent}
           <Animated.View
               {...this._setPointerEvents(topCard, 'cardB')}
               style={this.getCardStyles('cardB')}>
@@ -482,6 +509,8 @@ CardStack.propTypes = {
   duration: PropTypes.number,
 
   swipeBackgroundComponent: PropTypes.any,
+  onDrag: PropTypes.func,
+  onDirectionChanged: PropTypes.func,
 }
 
 CardStack.defaultProps = {
@@ -513,6 +542,8 @@ CardStack.defaultProps = {
   outputRotationRange: ['-15deg', '0deg', '15deg'],
   duration: 300,
   swipeBackgroundComponent: null,
+  onDrag: () => {},
+  onDirectionChanged: () => {},
 }
 polyfill(CardStack);
 export default CardStack;
