@@ -109,7 +109,7 @@ class CardStack extends Component {
         } = this.props;
 
         if (((Math.abs(gestureState.dx) > horizontalThreshold) ||
-          (Math.abs(gestureState.dx) > horizontalThreshold * 0.6 &&
+          (Math.abs(gestureState.dx) > horizontalThreshold * 0.3 &&
             swipeDuration < 150)
         ) && this.props.horizontalSwipe) {
 
