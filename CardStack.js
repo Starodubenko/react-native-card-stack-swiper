@@ -300,23 +300,23 @@ class CardStack extends Component {
     })
   }
 
-  swipeTop(d = null) {
-    this._nextCard('top', 0, -height, d || this.props.duration);
+  swipeTop(onSwiped, d = null) {
+    this._nextCard('top', 0, -height, d || this.props.duration, onSwiped);
   }
 
-  swipeBottom(d = null) {
-    this._nextCard('bottom', 0, height, d || this.props.duration);
+  swipeBottom(onSwiped, d = null) {
+    this._nextCard('bottom', 0, height, d || this.props.duration, onSwiped);
   }
 
-  swipeRight(d = null) {
-    this._nextCard('right', width * 1.5, 0, d || this.props.duration);
+  swipeRight(onSwiped, d = null) {
+    this._nextCard('right', width * 1.5, 0, d || this.props.duration, onSwiped);
   }
 
-  swipeLeft(d = null) {
-    this._nextCard('left', -width * 1.5, 0, d || this.props.duration);
+  swipeLeft(onSwiped, d = null) {
+    this._nextCard('left', -width * 1.5, 0, d || this.props.duration, onSwiped);
   }
 
-  _nextCard(direction, x, y, duration = 400) {
+  _nextCard(direction, x, y, duration = 400, onSwiped = () => {}) {
     const { verticalSwipe, horizontalSwipe, loop } = this.props;
     const { sindex, cards, topCard } = this.state;
 
@@ -346,6 +346,7 @@ class CardStack extends Component {
           duration,
         }
       ).start(() => {
+        onSwiped();
 
         const newTopCard = (topCard === 'cardA') ? 'cardB' : 'cardA';
 
